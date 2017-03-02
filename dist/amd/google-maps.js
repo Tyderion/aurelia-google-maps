@@ -155,6 +155,7 @@ define(["require", "exports", "aurelia-dependency-injection", "aurelia-templatin
                         }
                     });
                     createdMarker.addListener('mouseover', function () {
+                        console.log('GOOGLE MAPS MARKER MOUSEOVER', marker);
                         _this.eventAggregator.publish(MARKERMOUSEOVER, createdMarker);
                         createdMarker.setZIndex(window.google.maps.Marker.MAX_ZINDEX + 1);
                     });

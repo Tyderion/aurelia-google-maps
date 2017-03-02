@@ -215,6 +215,7 @@ export class GoogleMaps {
                 /*add event listener for hover over the marker,
                  *the event payload is the marker itself*/
                 createdMarker.addListener('mouseover', () => {
+                    console.log('GOOGLE MAPS MARKER MOUSEOVER', marker);
                     this.eventAggregator.publish(MARKERMOUSEOVER, createdMarker);
                     createdMarker.setZIndex((<any>window).google.maps.Marker.MAX_ZINDEX + 1);
                 });
