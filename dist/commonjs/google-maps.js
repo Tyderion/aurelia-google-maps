@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var aurelia_dependency_injection_1 = require("aurelia-dependency-injection");
 var aurelia_templating_1 = require("aurelia-templating");
 var aurelia_task_queue_1 = require("aurelia-task-queue");
@@ -152,6 +153,7 @@ var GoogleMaps = (function () {
             }).then(function (createdMarker) {
                 createdMarker.addListener('click', function () {
                     if (!createdMarker.infoWindow) {
+                        console.log('GOOGLE MAPS ELEMENT MARKER CLICKED', marker);
                         _this.eventAggregator.publish(MARKERCLICK, createdMarker);
                     }
                     else {

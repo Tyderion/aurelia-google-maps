@@ -205,6 +205,7 @@ export class GoogleMaps {
                  * the event payload is the marker itself */
                 createdMarker.addListener('click', () => {
                     if (!createdMarker.infoWindow) {
+                        console.log('GOOGLE MAPS ELEMENT MARKER CLICKED', marker);
                         this.eventAggregator.publish(MARKERCLICK, createdMarker);
                     } else {
                         createdMarker.infoWindow.open(this.map, createdMarker);

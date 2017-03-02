@@ -173,6 +173,7 @@ System.register(["aurelia-dependency-injection", "aurelia-templating", "aurelia-
                         }).then(function (createdMarker) {
                             createdMarker.addListener('click', function () {
                                 if (!createdMarker.infoWindow) {
+                                    console.log('GOOGLE MAPS ELEMENT MARKER CLICKED', marker);
                                     _this.eventAggregator.publish(MARKERCLICK, createdMarker);
                                 }
                                 else {

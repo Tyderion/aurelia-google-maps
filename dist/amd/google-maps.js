@@ -9,6 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 define(["require", "exports", "aurelia-dependency-injection", "aurelia-templating", "aurelia-task-queue", "aurelia-binding", "aurelia-event-aggregator", "aurelia-logging", "./configure"], function (require, exports, aurelia_dependency_injection_1, aurelia_templating_1, aurelia_task_queue_1, aurelia_binding_1, aurelia_event_aggregator_1, aurelia_logging_1, configure_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     var GM = 'googlemap';
     var BOUNDSCHANGED = GM + ":bounds_changed";
     var CLICK = GM + ":click";
@@ -146,6 +147,7 @@ define(["require", "exports", "aurelia-dependency-injection", "aurelia-templatin
                 }).then(function (createdMarker) {
                     createdMarker.addListener('click', function () {
                         if (!createdMarker.infoWindow) {
+                            console.log('GOOGLE MAPS ELEMENT MARKER CLICKED', marker);
                             _this.eventAggregator.publish(MARKERCLICK, createdMarker);
                         }
                         else {
