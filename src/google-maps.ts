@@ -74,23 +74,23 @@ export class GoogleMaps {
             });
         });
 
-        this.eventAggregator.subscribe('startMarkerHighlight', function(data: any) {
+        this.eventAggregator.subscribe('startMarkerHighlight', function (data: any) {
             let mrkr: any = self._renderedMarkers[data.index];
             mrkr.setIcon(mrkr.custom.altIcon);
             mrkr.setZIndex((<any>window).google.maps.Marker.MAX_ZINDEX + 1);
         });
 
-        this.eventAggregator.subscribe('stopMarkerHighLight', function(data: any) {
+        this.eventAggregator.subscribe('stopMarkerHighLight', function (data: any) {
             let mrkr: any = self._renderedMarkers[data.index];
-            mrkr.setIcon( mrkr.custom.defaultIcon);
+            mrkr.setIcon(mrkr.custom.defaultIcon);
         });
 
-        this.eventAggregator.subscribe('panToMarker', function(data: any) {
+        this.eventAggregator.subscribe('panToMarker', function (data: any) {
             self.map.panTo(self._renderedMarkers[data.index].position);
             self.map.setZoom(17);
         });
 
-        this.eventAggregator.subscribe(`clearMarkers`, function() {
+        this.eventAggregator.subscribe(`clearMarkers`, function () {
             this.clearMarkers();
         });
     }
@@ -100,7 +100,7 @@ export class GoogleMaps {
             return;
         }
 
-        this._locationByAddressMarkers.concat(this._renderedMarkers).forEach(function(marker: any) {
+        this._locationByAddressMarkers.concat(this._renderedMarkers).forEach(function (marker: any) {
             marker.setMap(null);
         });
 
@@ -201,12 +201,12 @@ export class GoogleMaps {
                 map: this.map,
                 position: markerLatLng
             }).then((createdMarker: any) => {
+                const eventPayload = { marker: createdMarker, original: marker };
                 /* add event listener for click on the marker,
-                 * the event payload is the marker itself */
+                 * the event payload is the marker itself and the original object */
                 createdMarker.addListener('click', () => {
                     if (!createdMarker.infoWindow) {
-                        console.log('GOOGLE MAPS ELEMENT MARKER CLICKED', marker);
-                        this.eventAggregator.publish(MARKERCLICK, createdMarker);
+                        this.eventAggregator.publish(MARKERCLICK, eventPayload);
                     } else {
                         createdMarker.infoWindow.open(this.map, createdMarker);
                     }
@@ -215,13 +215,12 @@ export class GoogleMaps {
                 /*add event listener for hover over the marker,
                  *the event payload is the marker itself*/
                 createdMarker.addListener('mouseover', () => {
-                    console.log('GOOGLE MAPS MARKER MOUSEOVER', marker);
-                    this.eventAggregator.publish(MARKERMOUSEOVER, createdMarker);
+                    this.eventAggregator.publish(MARKERMOUSEOVER, eventPayload);
                     createdMarker.setZIndex((<any>window).google.maps.Marker.MAX_ZINDEX + 1);
                 });
 
                 createdMarker.addListener('mouseout', () => {
-                    this.eventAggregator.publish(MARKERMOUSEOUT, createdMarker);
+                    this.eventAggregator.publish(MARKERMOUSEOUT, eventPayload);
                 });
 
                 createdMarker.addListener('dblclick', () => {
@@ -279,7 +278,7 @@ export class GoogleMaps {
      */
     geocodeAddress(address: string, geocoder: any) {
         this._mapPromise.then(() => {
-            geocoder.geocode({'address': address}, (results: any, status: string) => {
+            geocoder.geocode({ 'address': address }, (results: any, status: string) => {
                 if (status !== (<any>window).google.maps.GeocoderStatus.OK) {
                     return;
                 }
@@ -292,7 +291,7 @@ export class GoogleMaps {
                     position: firstResultLocation
                 }).then((createdMarker: any) => {
                     this._locationByAddressMarkers.push(createdMarker);
-                    this.eventAggregator.publish(LOCATIONADDED, Object.assign(createdMarker, {placeId: results[0].place_id}));
+                    this.eventAggregator.publish(LOCATIONADDED, Object.assign(createdMarker, { placeId: results[0].place_id }));
                 });
             });
         });
@@ -550,8 +549,8 @@ export class GoogleMaps {
             }
 
             this.map.fitBounds(bounds);
-            let listener = google.maps.event.addListener(this.map, 'idle', function() {
-                if (this.map.getZoom() > this.zoom) 
+            let listener = google.maps.event.addListener(this.map, 'idle', function () {
+                if (this.map.getZoom() > this.zoom)
                     this.map.setZoom(this.zoom);
                 google.maps.event.removeListener(listener);
             });

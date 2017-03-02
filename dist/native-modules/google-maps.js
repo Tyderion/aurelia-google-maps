@@ -149,22 +149,21 @@ var GoogleMaps = (function () {
                 map: _this.map,
                 position: markerLatLng
             }).then(function (createdMarker) {
+                var eventPayload = { marker: createdMarker, original: marker };
                 createdMarker.addListener('click', function () {
                     if (!createdMarker.infoWindow) {
-                        console.log('GOOGLE MAPS ELEMENT MARKER CLICKED', marker);
-                        _this.eventAggregator.publish(MARKERCLICK, createdMarker);
+                        _this.eventAggregator.publish(MARKERCLICK, eventPayload);
                     }
                     else {
                         createdMarker.infoWindow.open(_this.map, createdMarker);
                     }
                 });
                 createdMarker.addListener('mouseover', function () {
-                    console.log('GOOGLE MAPS MARKER MOUSEOVER', marker);
-                    _this.eventAggregator.publish(MARKERMOUSEOVER, createdMarker);
+                    _this.eventAggregator.publish(MARKERMOUSEOVER, eventPayload);
                     createdMarker.setZIndex(window.google.maps.Marker.MAX_ZINDEX + 1);
                 });
                 createdMarker.addListener('mouseout', function () {
-                    _this.eventAggregator.publish(MARKERMOUSEOUT, createdMarker);
+                    _this.eventAggregator.publish(MARKERMOUSEOUT, eventPayload);
                 });
                 createdMarker.addListener('dblclick', function () {
                     _this.map.setZoom(15);
