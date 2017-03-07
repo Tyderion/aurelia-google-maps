@@ -431,11 +431,6 @@ define(["require", "exports", "aurelia-dependency-injection", "aurelia-templatin
                     bounds.extend(markerLatLng);
                 }
                 _this.map.fitBounds(bounds);
-                var listener = google.maps.event.addListener(_this.map, 'idle', function () {
-                    if (this.map.getZoom() > this.zoom)
-                        this.map.setZoom(this.zoom);
-                    google.maps.event.removeListener(listener);
-                });
             });
         };
         GoogleMaps.prototype.getMapTypeId = function () {
