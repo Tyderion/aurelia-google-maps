@@ -18,42 +18,40 @@ const APILOADED = `${GM}:api:loaded`;
 const LOCATIONADDED = `${GM}:marker:added`;
 const logger = getLogger('aurelia-google-maps');
 
-declare let google: any;
-
-export interface BaseMarker {
-    icon?: string;
+export interface BaseMarker<T> {
+    icon?: string | google.maps.Icon
     label?: string;
     title?: string;
     draggable?: boolean;
-    custom?: any;
+    custom?: T;
     infoWindow?: { pixelOffset?: number, content: string, position?: number, maxWidth?: number }
 }
 
-export interface AddressMarker extends BaseMarker {
+export interface AddressMarker<T> extends BaseMarker<T> {
     address: string;
 }
 
-export interface LatLongMarker extends BaseMarker {
+export interface LatLongMarker<T> extends BaseMarker<T> {
     latitude: number | string;
     longitude: number | string;
 }
 
-const isAddressMarker = (marker: Marker): marker is AddressMarker => {
-    return (<AddressMarker>marker).address !== undefined;
+const isAddressMarker = <T>(marker: Marker<T>): marker is AddressMarker<T> => {
+    return (<AddressMarker<T>>marker).address !== undefined;
 }
 
-export type Marker = AddressMarker | LatLongMarker;
+export type Marker<T> = AddressMarker<T> | LatLongMarker<T>;
 
 @noView()
 @customElement('google-map')
 @inject(Element, TaskQueue, Configure, BindingEngine, EventAggregator)
-export class GoogleMaps {
+export class GoogleMaps<T> {
     private element: Element;
     private taskQueue: TaskQueue;
     private config: any;
     private bindingEngine: BindingEngine;
     private eventAggregator: EventAggregator;
-    private validMarkers: LatLongMarker[];
+    private validMarkers: LatLongMarker<T>[];
     private _geocoder: any;
 
     @bindable address = null;
@@ -92,7 +90,7 @@ export class GoogleMaps {
 
         this.loadApiScript();
 
-        let self: GoogleMaps = this;
+        let self: GoogleMaps<T> = this;
         this._mapPromise = this._scriptPromise.then(() => {
             return new Promise((resolve) => {
                 // Register the the resolve method for _mapPromise
@@ -218,7 +216,7 @@ export class GoogleMaps {
      * @param marker
      *
      */
-    renderMarker(marker: LatLongMarker): Promise<void> {
+    renderMarker(marker: LatLongMarker<T>): Promise<void> {
         let markerLatLng = new (<any>window).google.maps.LatLng(parseFloat(<string>marker.latitude), parseFloat(<string>marker.longitude));
 
         return this._mapPromise.then(() => {
@@ -320,9 +318,9 @@ export class GoogleMaps {
      * @param address string
      *
      */
-    addressMarkerToMarker(marker: AddressMarker): Promise<LatLongMarker> {
+    addressMarkerToMarker(marker: AddressMarker<T>): Promise<LatLongMarker<T>> {
         return this.geocode(marker.address).then(firstResults => {
-            return { 
+            return <LatLongMarker<T>>{ 
                 ... marker,
                 latitude: firstResults.geometry.location.lat(),
                 longitude: firstResults.geometry.location.lng(),
@@ -495,7 +493,7 @@ export class GoogleMaps {
      *
      * @param newValue
      */
-    markersChanged(newValue: Marker[]) {
+    markersChanged(newValue: Marker<T>[]) {
         // If there was a previous subscription
         if (this._markersSubscription !== null) {
             // Dispose of the subscription
@@ -517,7 +515,7 @@ export class GoogleMaps {
 
         // Render all markers again
         this._mapPromise.then(() => {
-            Promise.all<LatLongMarker>(
+            Promise.all<LatLongMarker<T>>(
                 newValue.map(marker => {
                     if (isAddressMarker(marker)) {
                         return this.addressMarkerToMarker(marker);
