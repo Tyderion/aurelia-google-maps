@@ -1,4 +1,7 @@
 {
   "name": "aurelia-google-maps",
-  "main": "dist/amd/google-maps.d.ts"
+  "main": "dist/amd/google-maps.d.ts",
+  "globalDependencies": {
+    "googlemaps": "registry:dt/googlemaps#3.26.0+20170323101541"
+  }
 }
